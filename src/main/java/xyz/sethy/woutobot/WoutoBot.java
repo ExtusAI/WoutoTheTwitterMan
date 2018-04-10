@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
+
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,9 +16,9 @@ import java.util.regex.Pattern;
  * Created by Seth on 30/08/2017.
  */
 public class WoutoBot {
+    private static final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
     private final Gson gson;
     private final Twitter twitter;
-    private static final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
 
     public WoutoBot() {
         this.gson = new GsonBuilder().create();
@@ -42,12 +43,12 @@ public class WoutoBot {
 
         System.out.println("status");
         statuses.forEach(s -> {
-            if(max < i[0]) {
+            if (max < i[0]) {
                 return;
             }
             i[0]++;
 
-            if(s.getUser().getName().equalsIgnoreCase("woutobot"))
+            if (s.getUser().getName().equalsIgnoreCase("woutobot"))
                 return;
 
             String[] words = s.getText().split(" ");
@@ -55,7 +56,7 @@ public class WoutoBot {
             String word = words[element];
             Pattern p = Pattern.compile(URL_REGEX);
             Matcher m = p.matcher(word);
-            if((tweet.toString().length() + word.length() < 140 && !m.find())) {
+            if ((tweet.toString().length() + word.length() < 140 && !m.find())) {
                 tweet.append(word).append(" ");
             }
         });
@@ -72,9 +73,9 @@ public class WoutoBot {
 
                 String tweet = makeTweet(statuses);
 
-                System.out.println("i would tweet " + tweet);
+//                System.out.println("i would tweet " + tweet);
 
-//                twitter.updateStatus(tweet);
+                twitter.updateStatus(tweet);
 
             } catch (TwitterException e) {
                 e.printStackTrace();
