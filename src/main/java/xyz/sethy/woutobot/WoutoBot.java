@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +17,7 @@ import java.util.regex.Pattern;
  * Created by Seth on 30/08/2017.
  */
 public class WoutoBot {
+    public static final Logger LOGGER = Logger.getLogger("Woutobot");
     private static final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
     private final Gson gson;
     private final Twitter twitter;
@@ -41,7 +43,6 @@ public class WoutoBot {
         int max = 100;
         final int[] i = {0};
 
-        System.out.println("status");
         statuses.forEach(s -> {
             if (max < i[0]) {
                 return;
@@ -60,8 +61,7 @@ public class WoutoBot {
                 tweet.append(word).append(" ");
             }
         });
-
-        System.out.println(tweet.toString());
+        LOGGER.info(tweet.toString());
         return tweet.toString();
     }
 
@@ -70,15 +70,10 @@ public class WoutoBot {
         public void run() {
             try {
                 ResponseList<Status> statuses = twitter.getHomeTimeline(new Paging(1, 40));
-
                 String tweet = makeTweet(statuses);
-
-//                System.out.println("i would tweet " + tweet);
-
                 twitter.updateStatus(tweet);
-
             } catch (TwitterException e) {
-                e.printStackTrace();
+                LOGGER.info(e.getMessage());
             }
         }
     }
